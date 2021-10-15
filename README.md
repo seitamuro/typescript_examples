@@ -1,0 +1,1 @@
+TypeScriptのHandBookをみて作っています｡
