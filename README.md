@@ -18,6 +18,8 @@ function 関数名(引数: 引数の型, ...) : 戻り値の型 {}
 function 関数名(引数: {フィールド名: フィールドの型, ...}}) {}
 
 function 関数名(引数: {フィールド名?: フィールドの型, ...}}) {}
+
+function 関数名(引数 = 10) {}
 ```
 
 フィールド名に`?`がついていればそのフィールドを`null`か`undefined`､つまり書かずに引数として利用することができます｡
@@ -138,4 +140,95 @@ function eatFish(obj: Cat | Fish) {
 
     console.log("I can't eat this.");
 }
+```
+
+# Construct signature
+
+`new`コマンドをフィールドにつけることで関数として呼び出すことができます｡
+```
+type SomeObject = {};
+type SomeConstructor = {
+    new (s: string): SomeObject;
+};
+function fn(ctor: SomeConstructor) {
+    return new ctor("Hello");
+}
+
+interface CallOrConstruct {
+    new (s: string): Date;
+    (n?: number): number;
+}
+```
+
+# Generic function
+
+配列の先頭の要素を返す関数を考える｡
+
+```
+function firstElement(arr: any[]) : any { // 戻り値の型は省略可能
+    return arr[0];
+}
+```
+
+この関数の戻り値は`any`型となるので扱いづらい｡ここで`Generic`を使うことで返り値の型を明示的にすることができる｡
+
+```
+function firstElement<Type>(arr: Type[]) : Type | undefined {
+    return arr[0];
+}
+```
+
+`関数名<Type>`の`Type`が`Generic`にあたるもの｡コンパイル時に自動的に`Type`が`string`や`number`に置き換えられる｡戻り値が`Type | undefined`となっているのは`arr`が`[]`のとき`Type`が`undefined`になるためである｡
+
+`Generic`に特定のフィールドを持っているかを指定することができる｡
+
+```
+function longest<T extends { length: number}>(a: T, b: T) {
+    if (a.length >= b.length) {
+        return a;
+    } else {
+        return b;
+    }
+}
+```
+
+ここでは`a`と`b`が`length`というフィールドを持つことを指定している｡`Generic`は型の数が多くなるほどコンパイラの推論がうまくいきにくくなるため､数は少ないほうがいい｡
+
+# unknown
+
+`unknown`は`any`と似ているが､`unknown`のほうが安全｡`unknown`は`any`と異なり､フィールドをもつオブジェクトを取ることができない｡そのため､以下の`f1`関数はエラーにならないが､`f2`関数はエラーとなる｡
+
+```
+function f1(a: any) {
+    a.b(); // ok
+}
+
+function f2(a: unknown) {
+    a.b(); // error 
+}
+```
+
+# never
+
+`never`は`void`と異なり､値を返さないことを表す｡言い換えると､関数が実行されたら､その関数は終了しない(=戻り値を返すという処理が行われない)という意味になる｡もしくは､そのものが起こり得ないことを表している｡
+
+```
+function panic() : never {
+    throw new Error("panic!");
+}
+```
+
+# rest function
+
+複数の引数を1つの配列として受け取る関数です｡以下に例を示します｡
+```
+function multiply(n: number, ...m: number[]) {
+    returm m.map((x) => n * x);
+}
+```
+
+`...`は配列の中身を展開して､関数への引数として渡すことができる｡
+```
+const a = [1, 2, 3, 4];
+multiply(10, ...a); // returns [10, 20, 30, 40]
 ```

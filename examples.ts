@@ -221,3 +221,80 @@ function doSomething(fn: DescribableFunction) {
 }
 
 // construct signatures
+type SomeObject = {};
+type SomeConstructor = {
+    new (s: string): SomeObject;
+};
+function fn(ctor: SomeConstructor) {
+    return new ctor("hello");
+}
+
+interface CallOrConstruct {
+    new (s: string): Date;
+    (n?: number) : number;
+}
+function fn2(ctor: CallOrConstruct) {
+    new ctor("hello");
+}
+
+// Generic Functions
+function firstElement1(arr: any[]) { // It's return any type.
+    return arr[0];
+}
+
+function firstElement2<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+
+const firstE1 = firstElement2(["a", "b", "c"]); // type: string
+const firstE2 = firstElement2([1, 2, 3]);       // type: number
+const firstE3 = firstElement2([]);              // type: undefined
+
+function map<Input, Output>(arr: Input[], func: (args: Input) => Output) : Output[] {
+    return arr.map(func);
+}
+const parsed = map(["1", "2", "3"], (n) => parseInt(n));
+
+function longest<Type extends { length: number}>(a: Type, b: Type) {
+    if (a.length >= b.length) {
+        return a;
+    } else {
+        return b;
+    }
+}
+const longer1 = longest([1, 2], [1, 2, 3]); // longer1 = [1, 2, 3]
+const longer2 = longest("alice", "bob");    // longer2 = "alice"
+
+// unknown
+function f1(a: any) {
+    a.b();
+}
+
+function f2(a: unknown) {
+    // a.b();    error
+}
+
+// never
+function fail(msg: string): never {
+    throw new Error(msg);
+}
+
+function fn3(x: string | number) {
+    if (typeof x === "string") {
+        // do something
+    } else if (typeof x === "number") {
+        // do something
+    } else {
+        x; // x has type 'never'
+    }
+}
+
+// rest parameters
+function multiply(n: number, ...m: number[]) {
+    return m.map((x) => n * x);
+}
+const a = multiply(10, 1, 2, 3, 4); // returns [10, 20, 30, 40]
+
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+arr1.push(...arr2);
