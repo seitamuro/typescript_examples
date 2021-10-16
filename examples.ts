@@ -160,7 +160,7 @@ function example(x: string | number, y: string | boolean) {
 
 type Fish = { swim: () => void };
 type Bird = { fly: () => void };
-type Human = { swim?: () => void; flu?: () => void };
+type Human = { swim?: () => void; fly?: () => void };
 
 function move(animal: Fish | Bird) {
     if ("swim" in animal) {
@@ -183,3 +183,41 @@ let x = Math.random() < 0.5 ? 10 : "Hello world!"; // type: string | number
 function isFish(pet: Fish | Bird): pet is Fish {
     return (pet as Fish).swim !== undefined;
 }
+
+// Exhaustiveness checking
+interface Circle {
+    kind: "circle";
+    radius: number;
+}
+
+interface Square {
+    kind: "square";
+    sideLength: number;
+}
+
+type Shape = Circle | Square;
+
+function getArea(shape: Shape) {
+    switch (shape.kind) {
+        case "circle":
+            return Math.PI * shape.radius ** 2;
+
+        case "square":
+            return shape.sideLength ** 2;
+
+        default:
+            const _exhaustiveCheck: never = shape;
+            return _exhaustiveCheck;
+    }
+}
+
+// call sigunature
+type DescribableFunction = {
+    description: string;
+    (someArg: number): boolean;
+};
+function doSomething(fn: DescribableFunction) {
+    console.log(fn.description + " returned " + fn(6));
+}
+
+// construct signatures
