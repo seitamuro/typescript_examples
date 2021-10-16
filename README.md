@@ -232,3 +232,20 @@ function multiply(n: number, ...m: number[]) {
 const a = [1, 2, 3, 4];
 multiply(10, ...a); // returns [10, 20, 30, 40]
 ```
+
+# readonly
+
+`readonly`をつけられたフィールドの値は再代入することができない｡しかし､`readonly`はオブジェクト自体の変更はできないが､そのプロパティに`readonly`がつけられていなければプロパティを変更することはできる｡
+
+```
+interface Home {
+    readonly resident: {name: string, age: number};
+}
+
+function visitForBirthday(home: Home) {
+    home.resident.name = "rewritable";
+    home.resident.age++;
+
+    // home.resident = {name: "seitamuro", age:20000}; // this line occurs error.
+}
+```

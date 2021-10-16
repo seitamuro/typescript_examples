@@ -298,3 +298,78 @@ const a = multiply(10, 1, 2, 3, 4); // returns [10, 20, 30, 40]
 const arr1 = [1, 2, 3];
 const arr2 = [4, 5, 6];
 arr1.push(...arr2);
+
+// optional properties
+interface PaintOptions {
+    shape: Shape;
+    xPos?: number;
+    yPos?: number;
+}
+
+function paintShape(opts: PaintOptions) {
+    // ...
+}
+
+function getShape() : Shape {
+    return {
+        kind: "circle",
+        radius: 5
+    };
+}
+
+const shape = getShape();
+paintShape({ shape });
+paintShape({ shape, xPos: 100 });
+paintShape({ shape, yPos: 100 });
+paintShape({ shape, xPos: 100, yPos: 100 });
+
+// readonly property
+interface SomeType {
+    readonly prop: string;
+}
+
+interface Home {
+    readonly resident: {name: string, age: number};
+}
+
+function visitForBirthday(home: Home) {
+    home.resident.name = "seitamuro";
+    home.resident.age++;
+
+    // home.resident = {name: "foo", age: 0}; // itself is readonly
+}
+
+// index signatures
+interface StringArray {
+    [index: number]: string;
+}
+
+// generic in interface
+interface Box<Type> {
+    contents: Type;
+}
+
+function setContents<Type>(box: Box<Type>, newContents: Type) {
+    box.contents = newContents;
+}
+
+type OrNull<Type> = Type | null;
+type OneOrMany<Type> = Type | Type[];
+type OneOrManyOrNull<Type> = Type | Type[] | null;
+type OneOrManyOrNullStrings = OneOrManyOrNull<string>;
+
+// tuple
+type StringNumberPair = [string, number];
+function doSomething2(pair: [string, number]) {
+    const a = pair[0];
+    const b = pair[1];
+}
+doSomething2(["hello", 42]);
+
+type StringNumberBooleans = [string, number, ...boolean[]];
+type StringBooleansNumber = [string, ...boolean[], number];
+type BoolenasStringNumber = [...boolean[], string, number];
+
+const snb1: StringNumberBooleans = ["helo", 1];
+const snb2: StringNumberBooleans = ["helo", 1, true];
+const snb3: StringNumberBooleans = ["helo", 1, true, true];
