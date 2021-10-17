@@ -380,3 +380,72 @@ interface Circle2D {
 
 type KindlessCircle = RemoveKindField<Circle>;
 ```
+
+# Classes
+
+最低限のフィールドのみを持つクラスを以下に示す｡
+
+```
+class C {
+    _length = 0;
+}
+```
+
+`setter`と`getter`は`function`ではなく､それぞれ`set`と`get`を使う｡
+
+```
+class C {
+    _length = 0;
+
+    get length() {
+        return this._length;
+    }
+
+    set length(value) {
+        this._length = value;
+    }
+}
+```
+
+`constructor`を使うことで､フィールドに初期値を与えずにクラスを定義することができる｡
+
+```
+class C {
+    length: number;
+
+    constructor(value) {
+        this.length = value;
+    }
+}
+
+// 省略版
+class C {
+    constructor(public length: number){}
+}
+```
+
+`index signatures`を使うことでクラスのインスタンスに配列のように扱うことができるようになる｡
+
+```
+class MyClass {
+    [s: string]: boolean | ((s: string) => boolean);
+
+    check(s: string) {
+        return this[s] as boolean;
+    }
+}
+```
+
+`implements`を使うことで`class`に`interface`を継承することができる｡`interface`を継承すると`interface`で定義しているフィールドをクラスに実装することを強制することができる｡
+
+```
+interface Pingable {
+    ping(): void;
+}
+
+class B implements Pingable {
+    ping() {
+        console.log("ping!");
+    }
+}
+```

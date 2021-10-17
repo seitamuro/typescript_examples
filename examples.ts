@@ -528,7 +528,7 @@ type MappedTypeWithNewProperties<Type> = {
 }
 
 type Getters<Type> = {
-    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => T
+    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type;
 }
 
 interface Person {
@@ -550,3 +550,89 @@ interface Circle2D {
 }
 
 type KindlessCircle = RemoveKindField<Circle>;
+
+// Classes
+class C {
+    _length = 0;
+
+    get length() {
+        return this._length;
+    }
+
+    set length(value) {
+        this._length = value;
+    }
+}
+
+class MyClass {
+    [s: string]: boolean | ((s: string) => boolean);
+
+    check(s: string) {
+        return this[s] as boolean;
+    }
+}
+
+interface Pingable {
+    ping(): void;
+}
+
+class Sonar implements Pingable {
+    ping() {
+        console.log("ping!");
+    }
+}
+
+// this-based type guards
+class FileSystemObject {
+    isFile(): this is FileRep {
+        return this instanceof FileRep;
+    }
+
+    isDirectory(): this is Directory {
+        return this instanceof this.isDirectory;
+    }
+
+    isNetworked(): this is Networked & this {
+        return this.networked;
+    }
+
+    constructor(public path: string, private networked: boolean) {}
+}
+
+class FileRep extends FileSystemObject {
+    constructor(path: string, public content: string) {
+        super(path, false);
+    }
+}
+
+class Directory extends FileSystemObject {
+    children: FileSystemObject[];
+
+    constructor(path: string, children: FileSystemObject[]) {
+        super(path, false);
+        this.children = children;
+    }
+}
+
+interface Networked {
+    host: string;
+}
+
+const fso: FileSystemObject = new FileRep("foo/bar.txt", "foo");
+
+class MyBox<T> {
+    value?: T;
+
+    hasValue(): this is { value: T } {
+        return this.value !== undefined;
+    }
+}
+
+const box = new MyBox();
+box.value = "Gameboy";
+
+box.value;
+
+if (box.hasValue()) {
+    box.value;
+}
