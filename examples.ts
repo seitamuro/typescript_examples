@@ -373,3 +373,79 @@ type BoolenasStringNumber = [...boolean[], string, number];
 const snb1: StringNumberBooleans = ["helo", 1];
 const snb2: StringNumberBooleans = ["helo", 1, true];
 const snb3: StringNumberBooleans = ["helo", 1, true, true];
+
+// type manipulation - generic
+function identity<Type>(arg: Type) : Type {
+    return arg;
+}
+
+interface GenericIdentityFn<Type> {
+    (arg: Type): Type;
+}
+
+let myIdentity: GenericIdentityFn<number> = identity;
+
+class GenericNumber<NumType> {
+    zeroValue: NumType;
+    add: (x: NumType, y: NumType) => NumType;
+
+    constructor(zero: NumType) {
+        this.zeroValue = zero;
+        this.add = function (x, y) { return this.zeroValue; };
+    }
+}
+
+let myGenericNumber1 = new GenericNumber<number>(0);
+myGenericNumber1.add = function (x, y) {
+    return x + y;
+};
+
+let myGenericNumber2 = new GenericNumber<string>("");
+myGenericNumber2.add = function (x, y) {
+    return x + y;
+}
+
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity<Type extends Lengthwise>(arg: Type): Type {
+    console.log(arg.length);
+    return arg;
+}
+
+function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key) {
+    return obj[key];
+}
+
+let x2 = { a:1, b:2, c:3, d:4 };
+
+getProperty(x2, "a");
+//getProperty(x2, "m"); // error
+
+class BeeKeeper {
+    hasMask: boolean = true;
+}
+
+class ZooKeeper {
+    nametag: string = "Mikle";
+}
+
+class Animal {
+    numLens: number = 4;
+}
+
+class Bee extends Animal {
+    keeper: BeeKeeper = new BeeKeeper();
+}
+
+class Lion extends Animal {
+    keeper: ZooKeeper = new ZooKeeper();
+}
+
+function createInstance<A extends Animal>(c: new () => A): A {
+    return new c();
+}
+
+createInstance(Lion).keeper.nametag;
+createInstance(Bee).keeper.hasMask;

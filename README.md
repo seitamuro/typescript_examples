@@ -10,6 +10,8 @@ TypeScriptの[HandBook](https://www.typescriptlang.org/docs/handbook/intro.html)
 |[type名][]|配列|
 |any|オブジェクト型など|
 
+基本的に関数の引数や`interface`などでは`any`より`Generic`を使ったほうがいい｡
+
 # function
 
 ```
@@ -248,4 +250,19 @@ function visitForBirthday(home: Home) {
 
     // home.resident = {name: "seitamuro", age:20000}; // this line occurs error.
 }
+```
+
+# keyof
+
+`keyof`は左辺に渡されたオブジェクトのフィールドであるか(=フィールドの名前となるものが一つの型として認識される)が返される｡
+
+```
+function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key) {
+    return obj[key];
+}
+
+let x2 = { a:1, b:2, c:3, d:4 };
+
+getProperty(x2, "a");
+getProperty(x2, "m"); // error
 ```
