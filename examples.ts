@@ -471,3 +471,13 @@ function f() {
     return { x: 10, y: 3 };
 }
 // type P2 = ReturnType<f>;
+
+// Type Manipulation - Conditional Types
+interface IdLabel {
+    id: number
+}
+
+interface NameLabel {
+    name: string
+}
+type NameOrID<T extends number | string> = T extends number ? IdLabel : NameLabel;

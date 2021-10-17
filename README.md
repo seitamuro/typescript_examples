@@ -285,3 +285,13 @@ function f() {
 ReturnType<f>; // error! f is function. f is not type.
 ReturnType<typeof f>; // type: { x: number, y: number }
 ```
+
+# Conditional Types
+
+`generic`で`extends`を使うことで型にフィールドを持っているものや型の種類をしていすることができる｡以下のように三項演算子と組み合わせることもできる｡
+
+```
+type NameOrID<T extends number | string> = T extends number ? IdLabel : NameLabel;
+```
+
+これは`T`は`number`か`string`のどちらかになり､もし`number`なら`T`は`IdLabel`､そうでなければ`NameLabel`になる｡
