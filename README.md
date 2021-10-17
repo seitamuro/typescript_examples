@@ -270,3 +270,18 @@ type Arrayish = { [n: number]: unknown };
 type A = keyof Arrayish;  // type: number
 type A = keyof [1, 2, 3]; // type: number
 ```
+
+# ReturnType
+
+渡された型の戻り値を返します｡渡されたものが型でなければエラー｡`typeof`は渡されたものの型を返す｡
+
+```
+type Predicate = (x: unknown) => boolean;
+ReturnType<Predicate>; // type: boolean
+
+function f() {
+    return { x: 10, y: 3 };
+}
+ReturnType<f>; // error! f is function. f is not type.
+ReturnType<typeof f>; // type: { x: number, y: number }
+```

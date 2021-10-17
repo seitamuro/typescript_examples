@@ -459,3 +459,15 @@ type A = keyof Arrayish; // type: number
 
 type Mapish = { [k: string]: boolean };
 type M = keyof Mapish; // type: string | number
+
+// Type Manipulation - Typeof Type Operator
+let s = "hello";
+let n: typeof s; // type: string
+
+type Predicate = (x: unknown) => boolean;
+type K = ReturnType<Predicate>; // type: boolean
+
+function f() {
+    return { x: 10, y: 3 };
+}
+// type P2 = ReturnType<f>;
