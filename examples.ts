@@ -481,3 +481,72 @@ interface NameLabel {
     name: string
 }
 type NameOrID<T extends number | string> = T extends number ? IdLabel : NameLabel;
+
+// Type Manipulation - Mapped Types
+type OptionsFlags<Type> = {
+    [Property in keyof Type]: boolean;
+};
+
+type FeatureFlags = {
+    darkMode: () => void;
+    newUserProfile: () => void;
+};
+
+type FeatureOptions = OptionsFlags<FeatureFlags>;
+// ^
+// |
+// type: FeatureOptions = 
+//  darkMode: boolean
+//  newUserProfile: boolean
+// }
+
+type CreateMutable<Type> = {
+    -readonly [Property in keyof Type]: Type[Property];
+}
+
+type LockedAccount = {
+    readonly id: string;
+    readonly name: string;
+}
+
+type UnlockedAccount = CreateMutable<LockedAccount>;
+
+type Concreate<Type> = {
+    [Property in keyof Type]-?: Type[Property];
+}
+
+type MayBeUser = {
+    id: string;
+    name?: string;
+    age?: number;
+}
+
+type User = Concreate<MayBeUser>; // {id: string, name: string, age: number}
+
+type MappedTypeWithNewProperties<Type> = {
+    [Property in keyof Type as string]: Type[Property];
+}
+
+type Getters<Type> = {
+    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => T
+}
+
+interface Person {
+    name: string;
+    age: number;
+    location: string;
+}
+
+type LazyPerson = Getters<Person>;
+
+// NOTE: Exclude<T, U> = T extends U ? T : never;
+type RemoveKindField<Type> = {
+    [Property in keyof Type as Exclude<Property, "kind">]: Type[Property]
+}
+
+interface Circle2D {
+    kind: "circle";
+    radius: number;
+}
+
+type KindlessCircle = RemoveKindField<Circle>;

@@ -295,3 +295,88 @@ type NameOrID<T extends number | string> = T extends number ? IdLabel : NameLabe
 ```
 
 これは`T`は`number`か`string`のどちらかになり､もし`number`なら`T`は`IdLabel`､そうでなければ`NameLabel`になる｡
+
+# Mapped Types
+
+`map`型は`PropertyKey`と呼ばれる`Union`を利用している`generic`型のもののことをいう｡`map`の例を以下に示す｡`in keyof`が使われることが多い｡
+
+```
+type Map<Type> = {
+    [PropertyKey in keyof Type]: boolean;
+}
+
+type Flags = {
+    a: () => void;
+    b: () => void;
+}
+
+type MappedFlags = Map<Flags>; // type: { a: boolean, b: boolean}
+```
+
+`map`は可変性(`readonly`か否か)を変更することができる｡このとき`+readonly`または`-readonly`を利用する｡
+
+```
+type CreateMutable<Type> = {
+    -readonly [Property in keyof Type]: Type[Property];
+}
+
+type Locked {
+    readonly a: number;
+    readonly b: string;
+}
+
+type Mutable = CreateMutable<Locked>; // type: { a: number, b: string}
+```
+
+`?`をはずすこともできる｡
+
+```
+type Concreate<Type> = {
+    [Property in keyof Type]-?: Type[Property];
+}
+
+type MaybeUser = {
+    id: string;
+    name?: string;
+    age?: number;
+}
+
+type User = Concreate<MayBeUser>; // {id: string, name: string, age: number}
+```
+
+フィールド名の変更やゲッターの作成なども行うことができる｡
+
+```
+type MappedTypeWithNewProperties<Type> = {
+    [Property in keyof Type as string]: Type[Property];
+}
+
+type Getters<Type> = {
+    [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => T
+}
+
+interface Person {
+    name: string;
+    age: number;
+    location: string;
+}
+
+type LazyPerson = Getters<Person>;
+```
+
+特定の名前のフィールドの削除を行うこともできる｡ここでは`kind`を除去しています｡これは`map`が`never`を無視するという性質を利用しています｡
+
+```
+type Exclude<T, U> = T extends U ? T : never;
+
+type RemoveKindField<Type> = {
+    [Property in keyof Type as Exclude<Property, "kind">]: Type[Property]
+}
+
+interface Circle2D {
+    kind: "circle";
+    radius: number;
+}
+
+type KindlessCircle = RemoveKindField<Circle>;
+```
