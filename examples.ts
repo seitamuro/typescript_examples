@@ -449,3 +449,13 @@ function createInstance<A extends Animal>(c: new () => A): A {
 
 createInstance(Lion).keeper.nametag;
 createInstance(Bee).keeper.hasMask;
+
+// Type Manipulation - Keyof Type Operator
+type Point2D = { x:number, y:number};
+type P = keyof Point2D; // type: typeof Point
+
+type Arrayish = { [n: number]: unknown };
+type A = keyof Arrayish; // type: number
+
+type Mapish = { [k: string]: boolean };
+type M = keyof Mapish; // type: string | number

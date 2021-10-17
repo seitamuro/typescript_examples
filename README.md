@@ -265,4 +265,8 @@ let x2 = { a:1, b:2, c:3, d:4 };
 
 getProperty(x2, "a");
 getProperty(x2, "m"); // error
+
+type Arrayish = { [n: number]: unknown };
+type A = keyof Arrayish;  // type: number
+type A = keyof [1, 2, 3]; // type: number
 ```
